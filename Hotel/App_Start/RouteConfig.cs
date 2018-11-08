@@ -25,8 +25,8 @@ namespace Hoteles
                             new[] { "Hoteles.Controllers" });
 
             routes.MapRoute("obtenerDetalle",
-                            "obtenerDetalle/",
-                            new { controller = "Inicio", action = "obtenerDetalle", id = UrlParameter.Optional },
+                            "obtenerDetalle/{id}/{fecha1}/{fecha2}/",
+                            new { controller = "Inicio", action = "obtenerDetalle", id = UrlParameter.Optional, fecha1 = "", fecha2 = "" },
                             new[] { "Hoteles.Controllers" });
         }
     }

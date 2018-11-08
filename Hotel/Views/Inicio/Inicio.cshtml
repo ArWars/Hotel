@@ -122,7 +122,6 @@
     @Scripts.Render("~/bundles/jqueryval")
     <script>
         $('#fechaPicker1').datetimepicker({
-            useCurrent: false,
             showClear: true,
             showClose: true,
             keepOpen: false,
@@ -161,14 +160,20 @@
         $(function () {
             $("#habitacion_id, #fechaTermino, #fechaInicio").change(function () {
                 var id = $('#habitacion_id').val();
-                if (id != "") {
+                var fecha1 = jQuery("input[name$='fechaInicio']").val().trim();
+                fecha1 = new Date(fecha1).getTime();
+                var fecha2 = jQuery("input[name$='fechaTermino']").val().trim();
+                fecha2 = new Date(fecha2).getTime();
+                if (id != '') {
+                    var link = (fecha1 !='' || fecha2!='') ? window.location.origin + "/obtenerDetalle/" + id + "/" + fecha1 + "/" + fecha2+"/" : window.location.origin + "/obtenerDetalle/" + id;
+                    console.log(link);
                     $('#detallesHabitacion').show();
                     var textoDetalle = $("#textoDetalle");
                     $.ajax({
                         cache: false,
                         type: "GET",
-                        url: window.location.origin+"/Inicio/obtenerDetalle/" + id,
-                        data: { },
+                        url: link,
+                        data: {},
                         success: function (data) {
                             textoDetalle.html('');
                             var texto = 'Hotel: '+data.hotel+'\n';
@@ -176,7 +181,8 @@
                             texto += 'Clase: ' + data.clase + '\n';
                             texto += 'Precio: $' + (( data.precio) / 1000).toFixed(3) + '\n';
                             texto += 'IVA: ' + data.iva + '%\n';
-                            texto += 'Total: $' + ((parseFloat(data.total) + data.total) / 1000).toFixed(3);
+                            if (data.tiempoExtra) texto += 'Tiempo Extra: ' + data.tiempoExtra + '\n';
+                            texto += 'Total: $' + ( data.total / 1000).toFixed(3);
                             textoDetalle.html(texto);
                         },
                         error: function (xhr, ajaxOptions, thrownError) {

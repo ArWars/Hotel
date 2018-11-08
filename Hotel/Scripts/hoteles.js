@@ -4,3 +4,4 @@
         || moment(value, "DD/MM/YYYY H:mm", true).isValid();
     }
 });
+

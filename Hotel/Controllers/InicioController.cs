@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
+using static Hoteles.Models.Helper;
 
 namespace Hoteles.Controllers
 {
@@ -34,25 +35,24 @@ namespace Hoteles.Controllers
                 co.hotel = s.hotel.nombre;
                 co.clase = Listado.getLista(s.clase);
                 co.iva = s.hotel.categoria.iva;
-                if (fecha1 != null && fecha2 != null)
+                DateTime f1 = new DateTime();
+                DateTime f2 = new DateTime();
+                try
                 {
-                    var f1 = DateTime.ParseExact(fecha1.Split(' ')[0] + " 12:00", "dd/MM/yyyy HH:mm", null);
-                    var a1 = DateTime.ParseExact(fecha2.Split(' ')[0] + " 12:00", "dd/MM/yyyy HH:mm", null);
-                    var f2 = DateTime.ParseExact(fecha1, "dd/MM/yyyy HH:mm", null);
-                    var a2 = DateTime.ParseExact(fecha2, "dd/MM/yyyy HH:mm", null);
-                    var f3 = fecha2.Split(' ')[1].Split(':');
-                    TimeSpan ts = new TimeSpan();
-                    TimeSpan ts2 = new TimeSpan();
-                    TimeSpan hora1 = new TimeSpan(Convert.ToInt32(f3[0]), Convert.ToInt32(f3[1]), 0), hora2 = new TimeSpan(12, 0, 0);
-                    ts = f2.Subtract(f1);
-                    ts2 = a2.Subtract(a1);
-                    co.tiempoExtra = ts.Days + ((ts.Days == 1) ? " Día":" Dias");
-                    if (hora1 > hora2)
-                    {
-                        co.tiempoExtra += " con " + ts2.Hours + ((ts2.Hours == 1) ? " Hora" : " Horas");
-                        co.total = (( (ts.Days==0) ? co.precio *1 : co.precio * ts.Days) * co.iva) / 100;
-                    }
+                    f1 = Convertir.aTimeStamp(Convert.ToInt64(fecha1));
+                    f2 = Convertir.aTimeStamp(Convert.ToInt64(fecha2));
                 }
+                catch(Exception e) {
+                    co.total = (co.precio * co.iva) / 100 + co.precio;
+                    return Json(co, JsonRequestBehavior.AllowGet);
+                }
+                TimeSpan ts = new TimeSpan();
+                TimeSpan hora2 = new TimeSpan(12, 0, 0);
+                ts = f2.Subtract(f1);
+                //ts2 = a2.Subtract(a1);
+                co.tiempoExtra = ts.Days + ((ts.Days == 1) ? " Día":" Dias");
+                co.tiempoExtra += " con " + ts.Hours + ((ts.Hours == 1) ? " Hora" : " Horas");
+                co.total = (( (ts.Days==0) ? co.precio *1 : co.precio * ts.Days) * co.iva) / 100 + co.precio;
                 return Json(co, JsonRequestBehavior.AllowGet);
             }
         }
@@ -83,23 +83,29 @@ namespace Hoteles.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Inicio(habitacion h)
+        public ActionResult Inicio(reserva r)
         {
             using (hotelesEntidad db = new hotelesEntidad())
             {
                 if (!ModelState.IsValid) return View();
                 try
                 {
-                    h.codigo = h.codigo.ToUpper();
-                    db.habitacion.Add(h);
-                    db.SaveChanges();
-                    TempData["Mensaje"] = new Mensajes() { Clase = "alert-success", Titulo = "Perfecto!", Mensaje = "La habitación fue creada." };
-                    return RedirectToAction("Ver", "Hotel", new { id = h.hotel_id });
+                    int contador = db.reserva.Where(c => c.fechaInicio >= r.fechaInicio)
+                                       .Where(c => c.fechaTermino <= r.fechaTermino)
+                                       .Where(c => c.habitacion_id == r.habitacion_id).Count();
+                    if (contador == 0)
+                    {
+                        db.reserva.Add(r);
+                        db.SaveChanges();
+                        TempData["Mensaje"] = new Mensajes() { Clase = "alert-success", Titulo = "Perfecto!", Mensaje = "La reserva fue creada." };
+                    }
+                    else TempData["Mensaje"] = new Mensajes() { Clase = "alert-danger", Titulo = "Error!", Mensaje = "Existen clientes en este horario, seleccionar otro." };
+                    return RedirectToAction("Inicio", "Inicio");
                 }
                 catch (Exception e)
                 {
-                    TempData["Mensaje"] = new Mensajes() { Clase = "alert-danger", Titulo = "Error!", Mensaje = "Error al agregar la habitación." };
-                    return RedirectToAction("Ver", "Hotel", new { id = h.hotel_id });
+                    TempData["Mensaje"] = new Mensajes() { Clase = "alert-danger", Titulo = "Error!", Mensaje = "Error al agregar la reserva." };
+                    return RedirectToAction("Inicio", "Inicio");
                 }
             }
         }

@@ -24,7 +24,6 @@ namespace Hoteles.Models
         [Required]
         [DisplayName("Teléfono")]
         public int telefono { get; set; }
-        [Required]
         [MaxLength(70)]    
         [DisplayName("Nombre Agencia")]
         public string agencia_nombre { get; set; }
