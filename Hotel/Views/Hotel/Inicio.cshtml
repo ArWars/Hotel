@@ -1,0 +1,74 @@
+﻿@model IEnumerable<Hoteles.Models.hotel>
+
+@{
+    ViewBag.Title = "Listado de Hoteles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.ValidationSummary(true, "", new { @class = "text-success" })
+
+<p>
+    @Html.ActionLink("Nuevo Hotel", "Agregar")
+</p>
+@try
+{
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.nombre )
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.direccion)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.telefono)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.fecha_construccion)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.categoria_id)
+        </th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.direccion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.telefono)
+            </td>
+            <td>
+                @item.fecha_construccion.ToShortDateString()
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.categoria.nombre)
+            </td>
+            <td>
+                @Html.ActionLink("Ver", "Ver", new { id = item.id }) |
+                @Html.ActionLink("Editar", "Editar", new { id = item.id }) |
+                @Html.ActionLink("Eliminar", "Eliminar", new { id = item.id }, new { @class = "Eliminar" })
+            </td>
+        </tr>
+    } 
+</table>
+}
+catch (Exception e)
+{
+    <div class="text-danger">No hay hoteles creados</div>
+}
+
+@section scripts{
+    <script>
+        $(".Eliminar").click(function (event) {
+            if (!confirm('Estás seguro de eliminar?')) {
+                event.preventDefault();
+            }
+        });
+    </script>
+}

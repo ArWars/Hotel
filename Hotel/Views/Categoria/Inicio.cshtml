@@ -1,0 +1,54 @@
+﻿@model IEnumerable<Hoteles.Models.categoria>
+
+@{
+    ViewBag.Title = "Listado de Categorias";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.ValidationSummary(true, "", new { @class = "text-success" })
+<p>
+    @Html.ActionLink("Nueva Categoria", "Agregar")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.nombre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.descripcion)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.iva)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.nombre)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.descripcion)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.iva)%
+        </td>
+        <td>
+            @Html.ActionLink("Editar", "Editar", new { id=item.id }) |
+            @Html.ActionLink("Eliminar", "Eliminar", new { id=item.id })
+        </td>
+    </tr>
+}
+
+</table>
+
+@section scripts{
+    <script>
+        $(".Eliminar").click(function (event) {
+            if (!confirm('Estás seguro de eliminar?')) {
+                event.preventDefault();
+            }
+        });
+    </script>
+}

@@ -1,0 +1,213 @@
+﻿@model Hoteles.Models.reserva
+
+@{
+    ViewBag.Title = "Agendar Reserva";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        @Html.ValidationSummary(true, "", new { @class = "text-success" })
+        <div class="col-md-6">
+            <hr/>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group">
+                <label class="control-label" for="categoria_id">Hoteles</label>
+                <div class="col-md-6">
+                    <select class="form-control" data-val="true" data-val-required="El campo Hoteles es obligatorio." id="hotel_id" name="hotel_id" required>
+                        <option value="" selected>Seleccionar Hotel</option>
+                        @{ 
+                            Hoteles.Models.hotelesEntidad db = new Hoteles.Models.hotelesEntidad();
+                            List<Hoteles.Models.hotel> listado = db.hotel.ToList();
+                            foreach (Hoteles.Models.hotel hotel in listado)
+                            {
+                                @Html.Raw("<option value=\""+ hotel.id + "\">"+ hotel.nombre + " - " + hotel.categoria.nombre + "</option>");
+                            }
+                        }
+                    </select>
+                    @Html.ValidationMessage("hotel_id", "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group" id="habitacion">
+                @Html.LabelFor(model => model.habitacion_id, htmlAttributes: new { @class = "control-label" })
+                <div class="col-md-6">
+                    @Html.DropDownListFor(model => model.habitacion_id, new List<SelectListItem>(), new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.habitacion_id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-6 form-check-inline">
+                    <label Class="form-check-label">Es Agencia?</label>
+                    <input type="checkbox" ID="agencia" Class="form-check-input" />
+                </div>
+            </div>
+
+            <div class="form-group" id="agenciaNombre">
+                @Html.LabelFor(model => model.agencia_nombre, htmlAttributes: new { @class = "control-label" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.agencia_nombre, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.agencia_nombre, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.nombre, htmlAttributes: new { @class = "control-label" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.nombre, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.nombre, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.direccion, htmlAttributes: new { @class = "control-label" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.direccion, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.direccion, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.telefono, htmlAttributes: new { @class = "control-label" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.telefono, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.telefono, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.fechaInicio, htmlAttributes: new { @class = "control-label" })
+                <div class="col-md-6 input-group date" id="fechaPicker1" data-target-input="nearest" data-toggle="datetimepicker" data-target="#fechaPicker1">
+                    @Html.EditorFor(model => model.fechaInicio, new { htmlAttributes = new { @class = "form-control datetimepicker-input", data_toggle = "datetimepicker", type = "text", data_target = "fechaPicker1" } })
+                    <div class="input-group-append" data-target="#fechaPicker1" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+                @Html.ValidationMessageFor(model => model.fechaInicio, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.fechaTermino, htmlAttributes: new { @class = "control-label" })
+                <div class="col-md-6 input-group date" id="fechaPicker2" data-target-input="nearest" data-toggle="datetimepicker" data-target="#fechaPicker2">
+                    @Html.EditorFor(model => model.fechaTermino, new { htmlAttributes = new { @class = "form-control datetimepicker-input", data_toggle = "datetimepicker", type = "text", data_target = "fechaPicker2" } })
+                    <div class="input-group-append" data-target="#fechaPicker2" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+                @Html.ValidationMessageFor(model => model.fechaTermino, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-6">
+                    <input type="submit" value="Reservar" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group" >
+                <div style="padding-top: 5%;">
+                    <label>Detalle:</label>
+                    <textarea class="form-control textoArea" id="textoDetalle" style="height: 150px;" disabled></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $('#fechaPicker1').datetimepicker({
+            useCurrent: false,
+            showClear: true,
+            showClose: true,
+            keepOpen: false,
+            locale: 'es',
+        });
+        $('#fechaPicker2').datetimepicker({
+            useCurrent: false,
+            showClear: true,
+            showClose: true,
+            keepOpen: false,
+            locale: 'es',
+        });
+
+        $("#fechaPicker1").on("change.datetimepicker", function (e) {
+            $('#fechaPicker2').datetimepicker('minDate', e.date);
+        });
+        $("#fechaPicker2").on("change.datetimepicker", function (e) {
+            $('#fechaPicker1').datetimepicker('maxDate', e.date);
+        });
+
+        $('#detallesHabitacion').hide();
+        $('#agenciaNombre').hide();
+        $('#habitacion').hide();
+        $('#agencia').change(function () {
+            var estado = this.checked;
+            if (estado) {
+                $('#agenciaNombre').show();
+            } else $('#agenciaNombre').hide();
+        });
+        $('#hotel_id').change(function () {
+            var estado = this.value;
+            if (estado=='') {
+                $('#habitacion').hide();
+            } else $('#habitacion').show();
+        });
+        $(function () {
+            $("#habitacion_id, #fechaTermino, #fechaInicio").change(function () {
+                var id = $('#habitacion_id').val();
+                if (id != "") {
+                    $('#detallesHabitacion').show();
+                    var textoDetalle = $("#textoDetalle");
+                    $.ajax({
+                        cache: false,
+                        type: "GET",
+                        url: window.location.origin+"/Inicio/obtenerDetalle/" + id,
+                        data: { },
+                        success: function (data) {
+                            textoDetalle.html('');
+                            var texto = 'Hotel: '+data.hotel+'\n';
+                            texto += 'Código: ' + data.codigo + '\n';
+                            texto += 'Clase: ' + data.clase + '\n';
+                            texto += 'Precio: $' + (( data.precio) / 1000).toFixed(3) + '\n';
+                            texto += 'IVA: ' + data.iva + '%\n';
+                            texto += 'Total: $' + ((parseFloat(data.total) + data.total) / 1000).toFixed(3);
+                            textoDetalle.html(texto);
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            alert('No se pudo obtener los detalles.');
+                        }
+                    });
+                } else $('#detallesHabitacion').hide();
+            });
+        });
+        $(function () {
+        $("#hotel_id").change(function () {
+            var id = $(this).val();
+            var habitacion = $("#habitacion_id");
+             $.ajax({
+                 cache: false,
+                 type: "GET",
+                 url: window.location.origin+"/Inicio/obtenerHabitaciones/" + id,
+                    data: { },
+                    success: function (data) {
+                        habitacion.html('');
+                        habitacion.append($('<option></option>').val('').html('Seleccionar un Hotel'));
+                        $.each(data, function (id, option) {
+                            habitacion.append($('<option></option>').val(option.id).html(option.codigo + ' - Precio: $' + (option.precio / 1000).toFixed(3)));
+                        });
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('No se pudieron obtener las habitaciones.');
+                    }
+                });
+            });
+        });
+</script>
+
+}

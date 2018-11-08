@@ -1,0 +1,78 @@
+﻿@model Hoteles.Models.hotel
+
+@{
+    ViewBag.Title = "Nuevo Hotel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "agregarHotel" })) 
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.id)
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.nombre, htmlAttributes: new { @class = "control-label" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.nombre, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.nombre, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.direccion, htmlAttributes: new { @class = "control-label" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.direccion, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.direccion, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.telefono, htmlAttributes: new { @class = "control-label" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.telefono, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.telefono, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.fecha_construccion, htmlAttributes: new { @class = "control-label" })
+            <div class="col-md-10">
+                <div class="form-group">
+                    <div class="input-group date" id="fecha" data-target-input="nearest">
+                        @Html.EditorFor(model => model.fecha_construccion, new { htmlAttributes = new { @class = "form-control datetimepicker-input validDate", data_toggle = "datetimepicker", type = "text", data_target = "#fecha" } })
+                        <div class="input-group-append" data-target="#fecha" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div>    
+                @Html.ValidationMessageFor(model => model.fecha_construccion, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        @{
+            List<SelectListItem> items = new SelectList(ViewBag.listaCategoria, "id", "nombre").ToList();
+        }
+        <div class="form-group">
+            @Html.LabelFor(model => model.categoria_id, htmlAttributes: new { @class = "control-label" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.categoria_id, items, "Seleccionar Categoría", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.categoria_id, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Crear" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Regresar", "Inicio")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

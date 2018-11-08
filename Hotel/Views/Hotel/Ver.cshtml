@@ -1,0 +1,110 @@
+﻿@model Hoteles.Models.hotel
+
+@{
+    ViewBag.Title = "Datos del Hotel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h4>Datos del Hotel</h4>
+
+<div>
+    <hr />
+    <div class="row col-md-12">
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.nombre)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.nombre)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.direccion)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.direccion)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.telefono)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.telefono)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.fecha_construccion)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.fecha_construccion)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.categoria_id)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.categoria.nombre)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-6">
+            <h4>Habitaciones</h4>
+            <p>
+                @Html.ActionLink(linkText: "Crear Nueva Habitación", actionName: "Agregar", controllerName: "Habitacion", routeValues: new { id = Model.id }, htmlAttributes: null)
+            </p>
+            @if (Model.habitacion != null)
+            {
+                <table class="table">
+                    <tr>
+                        <th>
+                            Codigo
+                        </th>
+                        <th>
+                            Clase
+                        </th>
+                        <th>
+                            Hotel
+                        </th>
+                        <th>
+                            Precio
+                        </th>
+                        <th></th>
+                    </tr>
+
+                    @foreach (var item in Model.habitacion)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.codigo)
+                            </td>
+                            <td>
+                                @Hoteles.Models.Listado.getLista(item.clase)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.hotel.nombre)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.precio)
+                            </td>
+                            <td>
+                                @Html.ActionLink(linkText: "Editar", actionName: "Editar", controllerName: "Habitacion", routeValues: new { id = item.id }, htmlAttributes: null) |
+                                @Html.ActionLink(linkText: "Eliminar", actionName: "Eliminar", controllerName: "Habitacion", routeValues: new { id = item.id }, htmlAttributes: new { @class = "Eliminar" })
+                            </td>
+                        </tr>
+                        }
+                </table>
+            }
+        </div>
+    </div>
+</div>
+<p>
+    @Html.ActionLink("Editar", "Editar", new { id = Model.id }) |
+    @Html.ActionLink("Volver", "Inicio")
+</p>
+
+@section scripts{
+    <script>
+        $(".Eliminar").click(function (event) {
+            if (!confirm('Estás seguro de eliminar?')) {
+                event.preventDefault();
+            }
+        });
+    </script>
+}
